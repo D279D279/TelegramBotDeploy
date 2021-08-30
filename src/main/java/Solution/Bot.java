@@ -11,14 +11,20 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public final class Bot extends TelegramLongPollingBot {
-    private String BOT_TOKEN;
-    private String BOT_USERNAME;
-    private String ADMIN_CHAT;
+    private final String BOT_TOKEN;
+    private final String BOT_USERNAME;
+    private final String ADMIN_CHAT;
 
-    public Bot() {
-        BOT_TOKEN = System.getenv("BOT_TOKEN");
-        BOT_USERNAME = System.getenv("BOT_USERNAME");
-        ADMIN_CHAT = System.getenv("ADMIN_CHAT");
+//    public Bot() {
+////        BOT_TOKEN = System.getenv("BOT_TOKEN");
+////        BOT_USERNAME = System.getenv("BOT_USERNAME");
+////        ADMIN_CHAT = System.getenv("ADMIN_CHAT");
+//    }
+
+    public Bot(String botToken, String botUserName, String adminChat) {
+        BOT_TOKEN = botToken;
+        BOT_USERNAME = botUserName;
+        ADMIN_CHAT = adminChat;
     }
 
     @Override
