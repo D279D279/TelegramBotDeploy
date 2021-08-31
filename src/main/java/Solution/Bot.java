@@ -7,8 +7,10 @@ import org.telegram.telegrambots.meta.api.methods.send.*;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 public final class Bot extends TelegramLongPollingBot {
     private final String BOT_TOKEN;
@@ -219,7 +221,7 @@ public final class Bot extends TelegramLongPollingBot {
         // * * * * *
         // если сообщение отправил не администратор
         if( (update.hasMessage()) && (!update.getMessage().getChatId().toString().equals(ADMIN_CHAT)) ) {
-            if(update.getMessage().isCommand()) {
+            if(update.getMessage().isCommand() && (!update.getMessage().getText().equals("/start"))) {
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setChatId(update.getMessage().getChatId().toString());
                 sendMessage.setText("Извините, Вы не можете отправять командные сообщения!");
@@ -234,7 +236,8 @@ public final class Bot extends TelegramLongPollingBot {
                     SendMessage sendMessage = new SendMessage();
                     sendMessage.setChatId(message.getChatId().toString());
                     sendMessage.setText("Мы закрыты.\n" +
-                            "Рабочее время с 10 до 22 с понедельника по субботу.\n" +
+                            "График работы\n" +
+                            "пн-пт: 10:00 — 20:00, сб: 11:00 — 17:00, вс: выходной\n" +
                             "Не расстраивайтесь, Вам ответят при первой же возможности.");
 
                     try {
@@ -261,12 +264,20 @@ public final class Bot extends TelegramLongPollingBot {
     // проверяет рабочее время
     public boolean isOnTime() {
         Calendar calendar = new GregorianCalendar();
+        calendar.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
 
         int open = 10;
-        int close = 22;
+        int close = 20;
+
+        int openSat = 11;
+        int closeSat = 17;
+
 
         if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
             return false;
+        } else if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+            if( (calendar.get(Calendar.HOUR_OF_DAY) < openSat) || (calendar.get(Calendar.HOUR_OF_DAY) > closeSat - 1))
+                return false;
         } else if( (calendar.get(Calendar.HOUR_OF_DAY) < open) || (calendar.get(Calendar.HOUR_OF_DAY) > close - 1)) {
             return false;
         }
